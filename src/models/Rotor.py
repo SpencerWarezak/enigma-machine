@@ -26,10 +26,14 @@ class Rotor():
             raise Exception("Invalid starting position! Must be in the range of 1-26 (inclusive).")
 
         self._cipher_map = {} ## set the cipher map to empty and then fill it
-        self.__set_cipher_map(self._ring_setting)
+        self._set_cipher_map(self._ring_setting)
 
-    def __set_cipher_map(self, shift: int):
+    def _set_cipher_map(self, shift: int):
         offset = ord('a')
         for char in range(ord('a'), ord('z') + 1):
             cipher_char = chr((char - offset + shift - 1) % 26 + offset)
             self._cipher_map[chr(char)] = cipher_char
+
+    def _rotate(self):
+        self._ring_setting = (self._ring_setting + 1) % 26
+        self._set_cipher_map(1)

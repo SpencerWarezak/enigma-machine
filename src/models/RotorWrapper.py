@@ -1,5 +1,6 @@
 ## Imports
 from Reflector import Reflector
+from Rotor import Rotor
 
 ## RotorWrapper Class
 ## 
@@ -41,8 +42,8 @@ class RotorWrapper():
         "C Dunn": Reflector.reflectorC_Dunn
     }
 
-    def __init__(self, rotors, reflector):
-        self._rotors = rotors if len(rotors) == 3 else []
+    def __init__(self, rotors: [Rotor], reflector: str):
+        self._rotors = sorted(rotors, key=lambda x: x._order) if len(rotors) == 3 else []
         if (len(self._rotors) == 0):
             raise Exception("The Enigma Machine requires exaclty 3 rotors!")
         
@@ -50,11 +51,43 @@ class RotorWrapper():
         if self._reflector == {}:
             raise Exception("Invalid reflector type input. Please select from [ B, C, B Dunn, C Dunn ].")
 
+
     ## Method to handle inputs
+    ##
     ## We want to achieve a few things with this method
-    ## The first of which is 
+    ## The first of which is running our translation through all three rotors
+    ## then reflecting back through them again
+    ## 
+    ## After this is completed, we need to ensure we properly update the rotor positions
+    ##
+    def handle_input(self, c: chr) -> chr:
+        ## handle encoding the input character
+        encoded_c = self.__get_encoded_char(c)
 
+        ## update rotor positions
+        ## grab the position of the first rotor
+        for rotor in self._rotors:
+            rotor._rotate()
 
+        return encoded_c
+    
+
+    ## Helper function to encode the character
+    def __get_encoded_char(self, c: chr) -> chr:
+        encoded_c = c
+        for rotor in self._rotors:
+            encoded_c = rotor._cipher_map[encoded_c]
+
+        ## encode with the reflector
+        encoded_c = self._reflector[encoded_c]
+
+        ## re-encode with the rotors but in reverse
+        for rotor in reversed(self._rotors):
+            encoded_c = rotor._cipher_map[encoded_c]
+
+        return encoded_c
+
+    
 
 
         
