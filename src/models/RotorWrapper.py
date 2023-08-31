@@ -1,5 +1,5 @@
 ## Imports
-from reflector import Reflector
+from Reflector import Reflector
 
 ## RotorWrapper Class
 ## 
