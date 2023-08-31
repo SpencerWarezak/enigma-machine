@@ -34,7 +34,7 @@ from Rotor import Rotor
 ## specifications at https://www.codesandciphers.org.uk/enigma/rotorspec.htm, there are 4 reflector
 ## types: reflector B, reflector C, reflector B Dünn, and reflector C Dünn
 
-class RotorWrapper():
+class RotorWrapper:
     reflectors_map = {
         "B": Reflector.reflectorB,
         "C": Reflector.reflectorC,
@@ -44,7 +44,7 @@ class RotorWrapper():
 
     def __init__(self, rotors: [Rotor], reflector: str):
         self._rotors = sorted(rotors, key=lambda x: x._order) if len(rotors) == 3 else []
-        if (len(self._rotors) == 0):
+        if (len(self._rotors) != 3):
             raise Exception("The Enigma Machine requires exaclty 3 rotors!")
         
         self._reflector = self.reflectors_map[reflector] if reflector in self.reflectors_map else {}
@@ -60,14 +60,19 @@ class RotorWrapper():
     ## 
     ## After this is completed, we need to ensure we properly update the rotor positions
     ##
-    def handle_input(self, c: chr) -> chr:
+    def _handle_input(self, c: chr) -> chr:
         ## handle encoding the input character
         encoded_c = self.__get_encoded_char(c)
 
         ## update rotor positions
-        ## grab the position of the first rotor
-        for rotor in self._rotors:
-            rotor._rotate()
+        ## rotate the rotors if their position matches the notch position
+        for i in range(len(self._rotors)):
+            rotor = self._rotors[i]
+            if i == 0:
+                rotor._rotate()
+            # elif self._rotors[i-1]._notch_position == rotor._ring_setting:
+            else:
+                rotor._rotate()
 
         return encoded_c
     
@@ -75,20 +80,16 @@ class RotorWrapper():
     ## Helper function to encode the character
     def __get_encoded_char(self, c: chr) -> chr:
         encoded_c = c
+
+        ## Forward encoding
         for rotor in self._rotors:
             encoded_c = rotor._cipher_map[encoded_c]
 
         ## encode with the reflector
         encoded_c = self._reflector[encoded_c]
 
-        ## re-encode with the rotors but in reverse
+        ## Backward encoding
         for rotor in reversed(self._rotors):
             encoded_c = rotor._cipher_map[encoded_c]
 
         return encoded_c
-
-    
-
-
-        
-

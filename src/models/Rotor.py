@@ -15,7 +15,7 @@
 ## If the setting is 3, then a maps to c, b maps to d, c maps to e, etc.
 ## Thus, we need to maintain a cipher map for each rotor that takes into account this change, such that _letter = order(_letter) + (setting - 1) % ord(_letter)
 
-class Rotor():
+class Rotor:
     def __init__(self, starting_pos: int, order: int):
         self._order = order if order in [1, 2, 3] else -1 ## order of the rotor (can be values 1-3)
         if self._order == -1:
@@ -27,6 +27,12 @@ class Rotor():
 
         self._cipher_map = {} ## set the cipher map to empty and then fill it
         self._set_cipher_map(self._ring_setting)
+
+        ## notch position for the first rotor is q
+        ## notch position for the second rotor is e
+        ## notch position for the third rotor is v
+        self._notch_position = 1 + ord('q') - ord('a') if self._order == 1 \
+            else 1 + ord('e') - ord('a') if self._order == 2 else 1 + ord('v') - ord('a')
 
     def _set_cipher_map(self, shift: int):
         offset = ord('a')
