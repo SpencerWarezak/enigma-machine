@@ -45,7 +45,7 @@ class RotorWrapper:
     def __init__(self, rotors: [Rotor], reflector: str):
         self._rotors = sorted(rotors, key=lambda x: x._order) if len(rotors) == 3 else []
         if (len(self._rotors) != 3):
-            raise Exception("The Enigma Machine requires exaclty 3 rotors!")
+            raise Exception("The Enigma Machine requires exactly 3 rotors!")
         
         self._reflector = self.reflectors_map[reflector] if reflector in self.reflectors_map else {}
         if self._reflector == {}:
@@ -63,17 +63,6 @@ class RotorWrapper:
     def _handle_input(self, c: chr) -> chr:
         ## handle encoding the input character
         encoded_c = self.__get_encoded_char(c)
-
-        ## update rotor positions
-        ## rotate the rotors if their position matches the notch position
-        for i in range(len(self._rotors)):
-            rotor = self._rotors[i]
-            if i == 0:
-                rotor._rotate()
-            # elif self._rotors[i-1]._notch_position == rotor._ring_setting:
-            else:
-                rotor._rotate()
-
         return encoded_c
     
 
@@ -81,9 +70,37 @@ class RotorWrapper:
     def __get_encoded_char(self, c: chr) -> chr:
         encoded_c = c
 
+        ## update rotor positions
+        ## rotate the rotors if their position matches the notch position
+        # for i in range(len(self._rotors)):
+        #     rotor = self._rotors[i]
+        #     if i == 0:
+        #         print('rotating first rotor!')
+        #         rotor._rotate()
+        #     elif self._rotors[i-1]._notch_position == self._rotors[i-1]._ring_setting:
+        #         print(f'rotating rotor {i+1}')
+        #         rotor._rotate()
+        rotor1 = self._rotors[0]
+        rotor1_pos = self._rotors[0]._ring_setting
+        rotor2 = self._rotors[1]
+        rotor2_pos = self._rotors[1]._ring_setting
+        rotor3 = self._rotors[2]
+
+        ## The first rotor always rotates
+        rotor1._rotate()
+
+        ## The second rotor rotates if the first rotors ring position == the first rotors notch position
+        if rotor1_pos == rotor2._notch_position:
+            rotor2._rotate()
+
+        ## The third rotate rotates if the second rotors ring position == the third rotors notch position
+        if rotor2_pos == rotor3._notch_position:
+            rotor3._rotate()
+
         ## Forward encoding
         for rotor in self._rotors:
             encoded_c = rotor._cipher_map[encoded_c]
+
 
         ## encode with the reflector
         encoded_c = self._reflector[encoded_c]

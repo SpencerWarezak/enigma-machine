@@ -41,5 +41,5 @@ class Rotor:
             self._cipher_map[chr(char)] = cipher_char
 
     def _rotate(self):
-        self._ring_setting = (self._ring_setting + 1) % 26
-        self._set_cipher_map(1)
+        self._ring_setting = (self._ring_setting % 26) + 1
+        self._set_cipher_map(self._ring_setting)

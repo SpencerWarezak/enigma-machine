@@ -75,9 +75,9 @@ class EnigmaMachine:
                     encoded_char = self.__plugboard[encoded_char]
 
                 ## Complete encoding in rotors
-                encoded_char = self.__wrapper._handle_input(lower_c)
+                encoded_char = self.__wrapper._handle_input(encoded_char)
 
-                ## Re-encode through the plugboard
+                # ## Re-encode through the plugboard
                 if encoded_char in self.__plugboard:
                     encoded_char = self.__plugboard[encoded_char]
 
