@@ -61,8 +61,28 @@ class RotorWrapper:
     ## After this is completed, we need to ensure we properly update the rotor positions
     ##
     def _handle_input(self, c: chr) -> chr:
+        ## update rotor positions
+        ## rotate the rotors if their position matches the notch position
+        # rotor1 = self._rotors[0]
+        # rotor2 = self._rotors[1]
+        # rotor3 = self._rotors[2]
+
+        # ## first rotor always rotates
+        # ## second rotor only rotates when it's notch position matches the first rotors ring setting
+        # ## third rotor only rotates when the second rotor rotates and it's notch position matches the second rotors ring setting
+        # rotor1._trigger_rotation()
+        # if rotor1._notch_position == rotor2._ring_setting:
+        #     rotor2._trigger_rotation()
+        # if rotor2._rotation_pending and rotor2._notch_position == rotor3._ring_setting:
+        #     rotor3._trigger_rotation()
+
+        # rotor1._check_for_rotation()
+        # rotor2._check_for_rotation()
+        # rotor3._check_for_rotation()
+
         ## handle encoding the input character
         encoded_c = self.__get_encoded_char(c)
+
         return encoded_c
     
 
@@ -70,37 +90,9 @@ class RotorWrapper:
     def __get_encoded_char(self, c: chr) -> chr:
         encoded_c = c
 
-        ## update rotor positions
-        ## rotate the rotors if their position matches the notch position
-        # for i in range(len(self._rotors)):
-        #     rotor = self._rotors[i]
-        #     if i == 0:
-        #         print('rotating first rotor!')
-        #         rotor._rotate()
-        #     elif self._rotors[i-1]._notch_position == self._rotors[i-1]._ring_setting:
-        #         print(f'rotating rotor {i+1}')
-        #         rotor._rotate()
-        rotor1 = self._rotors[0]
-        rotor1_pos = self._rotors[0]._ring_setting
-        rotor2 = self._rotors[1]
-        rotor2_pos = self._rotors[1]._ring_setting
-        rotor3 = self._rotors[2]
-
-        ## The first rotor always rotates
-        rotor1._rotate()
-
-        ## The second rotor rotates if the first rotors ring position == the first rotors notch position
-        if rotor1_pos == rotor2._notch_position:
-            rotor2._rotate()
-
-        ## The third rotate rotates if the second rotors ring position == the third rotors notch position
-        if rotor2_pos == rotor3._notch_position:
-            rotor3._rotate()
-
         ## Forward encoding
         for rotor in self._rotors:
             encoded_c = rotor._cipher_map[encoded_c]
-
 
         ## encode with the reflector
         encoded_c = self._reflector[encoded_c]

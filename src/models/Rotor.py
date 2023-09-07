@@ -26,13 +26,18 @@ class Rotor:
             raise Exception("Invalid starting position! Must be in the range of 1-26 (inclusive).")
 
         self._cipher_map = {} ## set the cipher map to empty and then fill it
-        self._set_cipher_map(self._ring_setting)
+        self._set_cipher_map(starting_pos)
 
         ## notch position for the first rotor is q
         ## notch position for the second rotor is e
         ## notch position for the third rotor is v
-        self._notch_position = 1 + ord('q') - ord('a') if self._order == 1 \
-            else 1 + ord('e') - ord('a') if self._order == 2 else 1 + ord('v') - ord('a')
+        self._notch_position = (
+            1 + ord('q') - ord('a') if self._order == 1
+            else 1 + ord('e') - ord('a') if self._order == 2 
+            else 1 + ord('v') - ord('a')
+        )
+
+        self._rotation_pending = False
 
     def _set_cipher_map(self, shift: int):
         offset = ord('a')
@@ -41,5 +46,13 @@ class Rotor:
             self._cipher_map[chr(char)] = cipher_char
 
     def _rotate(self):
-        self._ring_setting = (self._ring_setting % 26) + 1
+        self._ring_setting = self._ring_setting + 1 if self._ring_setting < 26 else 1
         self._set_cipher_map(self._ring_setting)
+        self._rotation_pending = False
+
+    def _check_for_rotation(self):
+        if self._rotation_pending:
+            self._rotate()
+
+    def _trigger_rotation(self):
+        self._rotation_pending = True
